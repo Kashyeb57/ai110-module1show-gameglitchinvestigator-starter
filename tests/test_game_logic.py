@@ -48,3 +48,52 @@ def test_empty_input_returns_not_ok():
     ok, value, err = parse_guess("")
     assert ok is False
     assert value is None
+
+
+# --- Challenge 1: Advanced edge-case tests ---
+
+def test_parse_guess_decimal_truncates_to_int():
+    """A decimal like '3.7' should be accepted and truncated to 3, not rejected."""
+    ok, value, err = parse_guess("3.7")
+    assert ok is True
+    assert value == 3
+    assert err is None
+
+
+def test_parse_guess_negative_number_is_accepted():
+    """'-5' is a valid integer parse — range validation is the game's job, not parse_guess."""
+    ok, value, err = parse_guess("-5")
+    assert ok is True
+    assert value == -5
+
+
+def test_parse_guess_very_large_number():
+    """Extremely large numbers should parse without crashing."""
+    ok, value, err = parse_guess("999999999")
+    assert ok is True
+    assert value == 999999999
+
+
+def test_parse_guess_whitespace_only_rejected():
+    """A string of spaces contains no number and must be rejected."""
+    ok, value, err = parse_guess("   ")
+    assert ok is False
+    assert value is None
+
+
+def test_check_guess_boundary_exact_match_at_one():
+    """Boundary value: guess == secret == 1 must return Win."""
+    outcome, _ = check_guess(1, 1)
+    assert outcome == "Win"
+
+
+def test_check_guess_negative_guess_is_too_low():
+    """A negative guess against a positive secret must be Too Low."""
+    outcome, _ = check_guess(-1, 50)
+    assert outcome == "Too Low"
+
+
+def test_check_guess_zero_against_positive_secret():
+    """Guessing 0 when secret is any positive number must be Too Low."""
+    outcome, _ = check_guess(0, 1)
+    assert outcome == "Too Low"

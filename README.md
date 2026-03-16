@@ -49,7 +49,7 @@ This is a number-guessing game built with Streamlit. The player picks a difficul
 - **Bug 6** — Changed attempts initialization from `1` to `0` to match New Game reset behavior
 
 ### pytest Results
-All 7 tests pass. Run `pytest tests/test_game_logic.py -v` to verify.
+All 14 tests pass (7 core + 7 edge-case). Run `pytest tests/test_game_logic.py -v` to verify.
 
 ## 📸 Demo
 
@@ -57,4 +57,8 @@ All 7 tests pass. Run `pytest tests/test_game_logic.py -v` to verify.
 
 ## 🚀 Stretch Features
 
-- [ ] [If you choose to complete Challenge 4, insert a screenshot of your Enhanced Game UI here]
+### Challenge 1: Advanced Edge-Case Testing
+
+Added 7 edge-case pytest tests covering negative numbers, decimals, huge values, whitespace-only input, and boundary guesses. All 14 tests pass.
+
+![pytest edge-case results](image.png)
