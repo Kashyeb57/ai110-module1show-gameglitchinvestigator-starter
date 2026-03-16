@@ -25,13 +25,35 @@ It wrote the code, ran away, and now the game is unplayable.
 
 ## 📝 Document Your Experience
 
-- [ ] Describe the game's purpose.
-- [ ] Detail which bugs you found.
-- [ ] Explain what fixes you applied.
+### Game Purpose
+This is a number-guessing game built with Streamlit. The player picks a difficulty (Easy, Normal, or Hard), then tries to guess a randomly chosen secret number within a limited number of attempts. After each guess the game gives a hint ("Go Higher" or "Go Lower") and updates a score. The goal is to guess the correct number before running out of attempts.
+
+### Bugs Found
+
+| # | Bug | Where |
+|---|-----|-------|
+| 1 | Inverted hints — "Too High" said "Go HIGHER!" pushing the player further away | `check_guess` in `app.py` |
+| 2 | Score mismatch — debug panel and win message showed different scores | Streamlit render order: debug panel rendered before `update_score` ran |
+| 3 | Invalid input saved to history — typing "xyz" stored it in the guess log | `history.append(raw_guess)` ran inside the `if not ok:` branch |
+| 4 | New Game broken after win/loss — game stayed permanently stuck | `if new_game:` didn't reset `status`, `score`, or `history` |
+| 5 | Info box and debug panel vanished after game over | `st.stop()` halted rendering before those elements were reached |
+| 6 | Attempts counter started at 1 instead of 0 | `st.session_state.attempts = 1` on initialization |
+
+### Fixes Applied
+
+- **Refactored** all game logic (`check_guess`, `parse_guess`, `update_score`, `get_range_for_difficulty`) out of `app.py` and into `logic_utils.py`, then imported them back
+- **Bug 1** — Swapped the hint message strings in `check_guess` so "Too High" returns "Go LOWER!" and "Too Low" returns "Go HIGHER!"
+- **Bug 3** — Removed `history.append(raw_guess)` from the `if not ok:` branch; only valid parsed integers are now appended
+- **Bug 4** — Added `st.session_state.status = "playing"`, `st.session_state.score = 0`, and `st.session_state.history = []` to the New Game handler
+- **Bug 5** — Moved the info box and debug panel to render *before* the `st.stop()` status check so they always display
+- **Bug 6** — Changed attempts initialization from `1` to `0` to match New Game reset behavior
+
+### pytest Results
+All 7 tests pass. Run `pytest tests/test_game_logic.py -v` to verify.
 
 ## 📸 Demo
 
-- [ ] [Insert a screenshot of your fixed, winning game here]
+![Fixed winning game](Screenshot%202026-03-15%20235334.png)
 
 ## 🚀 Stretch Features
 
